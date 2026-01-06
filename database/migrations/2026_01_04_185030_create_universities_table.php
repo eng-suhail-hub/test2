@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('universities', function (Blueprint $table) {
     $table->id();
-
-    $table->foreignId('governorate_id')
+      $table->foreignId('governorate_id')
         ->constrained()
         ->restrictOnDelete();
 
+
     $table->string('name');
-    $table->string('code')->unique();
+   // $table->string('code')->unique();
 
     $table->string('logo_path')->nullable();
     $table->text('description')->nullable();

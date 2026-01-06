@@ -11,6 +11,7 @@ class UniversityMedia extends Model
         'university_id',
         'type', // IMAGE | VIDEO
         'path',
+        'order', // ترتيب العرض
     ];
 
     public function university(): BelongsTo

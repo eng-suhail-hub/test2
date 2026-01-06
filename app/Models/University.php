@@ -23,7 +23,7 @@ class University extends Model
     /**
      * الجامعة → المحافظة
      */
-    public function governorate(): BelongsTo
+   public function governorate(): BelongsTo
     {
         return $this->belongsTo(Governorate::class);
     }
@@ -49,7 +49,9 @@ class University extends Model
      */
     public function admins(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'user_university')
+            ->withTimestamps();
+
     }
 
     /**

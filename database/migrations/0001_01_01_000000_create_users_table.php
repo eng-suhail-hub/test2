@@ -15,6 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->enum('role', [
+        'SUPER_ADMIN',
+        'UNIVERSITY_ADMIN',
+        'STUDENT'
+    ])->default('STUDENT');
+            $table->boolean('is_active')->default(true)->after('role');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -34,6 +40,23 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+        });
+        
+        Schema::create('user_university', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('university_id')
+                ->constrained('universities')
+                ->cascadeOnDelete();
+
+            $table->timestamps();
+
+            // منع التكرار
+            $table->unique(['user_id', 'university_id']);
         });
     }
 

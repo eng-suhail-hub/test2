@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\UserRole;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -22,7 +24,26 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+    
+       /**
+     * المستخدم الطالب → ملف الطالب
+     */
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    /**
+     * المستخدم (University Admin) → الجامعات التي يديرها
+     */
+    public function universities(): BelongsToMany
+    {
+        return $this->belongsToMany(University::class, 'user_university')
+            ->withTimestamps();
+
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -35,7 +56,20 @@ class User extends Authenticatable
         'two_factor_recovery_codes',
         'remember_token',
     ];
+    public function isStudent(): bool
+    {
+        return $this->role === UserRole::STUDENT;
+    }
 
+    public function isUniversityAdmin(): bool
+    {
+        return $this->role === UserRole::UNIVERSITY_ADMIN;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === UserRole::SUPER_ADMIN;
+    }
     /**
      * Get the attributes that should be cast.
      *
@@ -44,6 +78,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'role' => UserRole::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
