@@ -14,16 +14,29 @@ return new class extends Migration
         Schema::create('admission_cycles', function (Blueprint $table) {
     $table->id();
 
-    $table->foreignId('university_id')->constrained()->cascadeOnDelete();
-    $table->foreignId('college_id')->nullable()->constrained()->nullOnDelete();
-    $table->foreignId('major_id')->nullable()->constrained()->nullOnDelete();
-    $table->foreignId('study_type_id')->nullable()->constrained()->nullOnDelete();
+    $table->string('name'); // مثال: قبول عام 2026
 
-    $table->date('start_at');
-    $table->date('end_at');
+    // الفترة الزمنية
+    $table->timestamp('starts_at');
+    $table->timestamp('ends_at');
 
-    $table->integer('seats')->nullable();
-    $table->boolean('is_active')->default(true);
+    // المقاعد
+    $table->unsignedInteger('capacity')->nullable(); // null = unlimited
+   
+
+    // نوع الدراسة
+    $table->foreignId('study_type_id')
+        ->constrained()
+        ->cascadeOnDelete();
+
+    // Morph: جامعة / كلية / تخصص
+    $table->morphs('applicable'); 
+    // applicable_type, applicable_id
+
+    $table->unsignedInteger('accepted_count')->default(0);
+
+    $table->boolean('is_open')->default(true);
+    $table->boolean('allow_pending')->default(true); // يسمح بالتقديم حتى لو مغلق
 
     $table->timestamps();
 });

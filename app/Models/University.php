@@ -16,6 +16,10 @@ class University extends Model
         'code',
         'governorate_id',
         'logo_path',
+        'front_image',
+        'background_image',
+        'type',
+        'students_count',
         'description',
         'is_active',
     ];

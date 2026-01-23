@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Http\Middleware\RoleMiddleware;
 
 class UniversityPanelProvider extends PanelProvider
 {
@@ -25,6 +26,9 @@ class UniversityPanelProvider extends PanelProvider
         return $panel
             ->id('university')
             ->path('university')
+            ->login()
+            ->brandName(fn () => auth()->user()?->university()?->name ?? 'لوحة الجامعة')
+            ->brandLogo(fn () => auth()->user()?->university()?->logo_path)
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -51,6 +55,7 @@ class UniversityPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                RoleMiddleware::class . ':UNIVERSITY_ADMIN',
             ]);
     }
 }

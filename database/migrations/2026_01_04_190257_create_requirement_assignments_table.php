@@ -14,18 +14,43 @@ return new class extends Migration
         Schema::create('requirement_assignments', function (Blueprint $table) {
     $table->id();
 
-    $table->foreignId('requirement_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('requirement_rule_id')
+        ->constrained('requirement_rules')
+        ->cascadeOnDelete();
 
-    $table->foreignId('university_id')->nullable()->constrained()->nullOnDelete();
-    $table->foreignId('college_id')->nullable()->constrained()->nullOnDelete();
-    $table->foreignId('major_id')->nullable()->constrained()->nullOnDelete();
-    $table->foreignId('study_type_id')->nullable()->constrained()->nullOnDelete();
-    $table->foreignId('admission_cycle_id')->nullable()->constrained()->nullOnDelete();
 
-    $table->boolean('is_mandatory')->default(true);
-    $table->integer('priority')->default(0);
+    // Polymorphic Morph: يسمح بربط الشرط بـ (University, College, or Major)
+    $table->morphs('context');
+    
+    // السياق الذي تطبق فيه القاعدة
+  /*  $table->enum('context_type', [
+        'SYSTEM', 'UNIVERSITY', 'COLLEGE', 'MAJOR'
+    ]);
+
+    $table->unsignedBigInteger('context_id')->nullable();*/
+    // SYSTEM => null
+    // UNIVERSITY => university_id
+    // COLLEGE => college_id
+    // MAJOR => major_id
+
+// نوع الدراسة (nullable = applies to all)
+    $table->foreignId('study_type_id')
+        ->nullable()
+        ->constrained()
+        ->nullOnDelete();
+    $table->string('applies_to_type'); // Student | Application | SecondaryEducation
+    $table->string('applies_to_field'); // gpa | age | governorate_id
+
+    // هل شرط إجباري أم تفضيلي
+    $table->boolean('is_required')->default(true);
+
+    // أولوية التنفيذ (الأعلى أولاً)
+    $table->unsignedInteger('priority')->default(0);
+
+    $table->boolean('is_active')->default(true);
 
     $table->timestamps();
+
 });
     }
 

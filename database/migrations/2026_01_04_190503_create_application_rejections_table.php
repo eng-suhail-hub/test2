@@ -23,7 +23,9 @@ return new class extends Migration
     $table->foreignId('rejected_by')
         ->constrained('users')
         ->restrictOnDelete();
-
+        
+    $table->boolean('allow_resubmission')->default(true);
+    
     $table->timestamp('rejected_at');
     $table->timestamps();
 });

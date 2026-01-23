@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('ratings', function (Blueprint $table) {
     $table->id();
 
-    $table->foreignId('student_id')
-        ->constrained()
-        ->cascadeOnDelete();
+    $table->morphs('rateable'); // University | College
+    $table->enum('category', [
+        'STAFF','FACILITIES','COLLEGE','SERVICES'
+    ]);
 
-    $table->morphs('rateable');
-
-    $table->tinyInteger('score');
+    $table->unsignedTinyInteger('stars'); // 1–5
     $table->text('comment')->nullable();
 
+    $table->foreignId('student_id')->nullable();
     $table->timestamps();
 });
     }

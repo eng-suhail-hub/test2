@@ -14,22 +14,34 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
     $table->id();
 
-    $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-    $table->foreignId('university_id')->constrained()->cascadeOnDelete();
-    $table->foreignId('college_id')->constrained()->cascadeOnDelete();
-    $table->foreignId('major_id')->constrained()->cascadeOnDelete();
-    $table->foreignId('study_type_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('student_id')
+        ->constrained()
+        ->cascadeOnDelete();
+
+    $table->foreignId('admission_cycle_id')
+        ->constrained()
+        ->cascadeOnDelete();
 
     $table->enum('status', [
-        'DRAFT',
-        'SUBMITTED',
-        'UNDER_REVIEW',
-        'ACCEPTED',
-        'VERIFIED'
-    ]);
+        'DRAFT',        // أثناء التعبئة
+        'SUBMITTED',    // تم الإرسال
+        'UNDER_REVIEW', // تحت المراجعة
+        'PENDING',      // مستوفٍ جزئياً / بدون مقاعد
+        'ACCEPTED',     // مقبول
+        'REJECTED'      // مرفوض
+    ])->default('DRAFT');
+
+    $table->decimal('completion_rate', 5, 2)->default(0);
 
     $table->timestamp('submitted_at')->nullable();
+    $table->timestamp('reviewed_at')->nullable();
+
     $table->timestamps();
+
+    $table->unique([
+        'student_id',
+        'admission_cycle_id'
+    ]);
 });
     }
 

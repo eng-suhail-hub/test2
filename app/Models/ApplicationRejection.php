@@ -11,11 +11,16 @@ class ApplicationRejection extends Model
         'application_id',
         'reason',
         'rejected_by',
+        'allow_resubmission',
         'rejected_at',
     ];
 
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);
+    }
+    public function rejectedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
     }
 }

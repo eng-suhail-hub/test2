@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use App\UserRole;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Filament\Panel;
 
 class User extends Authenticatable
 {
@@ -70,6 +71,24 @@ class User extends Authenticatable
     {
         return $this->role === UserRole::SUPER_ADMIN;
     }
+    
+    
+    public function canAccessPanel(Panel $panel): bool
+{
+    return match ($panel->getId()) {
+        'admin' => $this->role === 'SUPER_ADMIN',
+
+        'university' => $this->role === 'UNIVERSITY_ADMIN',
+
+        default => false,
+    };
+}
+
+
+    public function university(): ?University
+{
+    return $this->universities()->first();
+}
     /**
      * Get the attributes that should be cast.
      *

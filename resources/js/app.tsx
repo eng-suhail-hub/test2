@@ -25,7 +25,12 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#4B5563',
+        color: '#4B5563', 
+        // مفيد لكي لا يظهر الشريط في الطلبات السريعة جداً
+        delay: 250,
+
+    // تضمين الـ CSS الافتراضي تلقائياً
+        includeCSS: true,
     },
 });
 

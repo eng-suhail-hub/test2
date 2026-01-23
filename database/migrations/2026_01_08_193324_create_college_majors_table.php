@@ -11,25 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('requirements', function (Blueprint $table) {
+        Schema::create('college_majors', function (Blueprint $table) {
     $table->id();
 
-    $table->string('code')->unique();
-    $table->string('name');
+    $table->foreignId('college_id')
+        ->constrained()
+        ->cascadeOnDelete();
 
-    $table->enum('type', [
-        'GRADE',
-        'DOCUMENT',
-        'AGE',
-        'NATIONALITY',
-        'CUSTOM'
-    ]);
-
-    $table->string('operator')->nullable();
-    $table->string('value')->nullable();
+    $table->foreignId('major_id')
+        ->constrained()
+        ->cascadeOnDelete();
 
     $table->boolean('is_active')->default(true);
+
     $table->timestamps();
+
+    $table->unique([
+        'college_id',
+        'major_id',
+    ]);
 });
     }
 
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('requirements');
+        Schema::dropIfExists('college_majors');
     }
 };

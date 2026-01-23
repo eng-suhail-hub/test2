@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\Toggle;
 
 class UniversityResource extends Resource
@@ -27,7 +28,7 @@ class UniversityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'الجامعات';
-    protected static ?string $pluralModelLabel = 'الجامعات';
+    protected static ?string $modelLabel = 'الجامعة';
 
     public static function form(Form $form): Form
     {
@@ -40,7 +41,18 @@ class UniversityResource extends Resource
                 ->label('المحافظة')
                 ->relationship('governorate', 'name')
                 ->required(),
-
+            Forms\Components\Textarea::make('description')
+                        ->label('الوصف')
+                        ->columnSpanFull(),
+            ToggleButtons::make('type')
+                ->label('النوع')
+                ->options([
+                    'GOVERNMENT' => 'حكومي',
+                    'PRIVATE' => 'خاص',
+                 ])
+                ->grouped() // هذه هي الوظيفة التي تجعل الأزرار ملتصقة ببعضها كما في الصورة
+                ->default('GOVERNMENT') // اليار الافتراضي
+                ->required(),            
             FileUpload::make('logo_path')
                 ->label('شعار الجامعة')
                 ->image(),
@@ -56,7 +68,8 @@ class UniversityResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->label('الاسم')->searchable(),
-                TextColumn::make('governorate.name')->label('المحافظة'),
+                TextColumn::make('governorate.name')->label('المحافظة')
+                ,TextColumn::make('type')->label('النوع')->searchable(),
                 IconColumn::make('is_active')->label('الحالة')->boolean(),
             ])
             ->actions([

@@ -9,10 +9,19 @@ class VerificationAppointment extends Model
 {
     protected $fillable = [
         'application_id',
-        'appointment_at',
+        'attendance_date',
+        'attendance_time',
         'location',
+        'instructions',
+        'attendance_confirmed'
     ];
-
+   
+    protected $casts = [
+        'attendance_date' => 'date',
+        'attendance_time' => 'datetime:H:i',
+        'attendance_confirmed' => 'boolean'
+    ];
+    
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);

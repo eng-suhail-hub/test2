@@ -3,38 +3,65 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\{
+    MorphTo,
+    MorphMany,
+    HasMany,
+    BelongsTo
+};
 
 class AdmissionCycle extends Model
 {
     protected $fillable = [
-        'university_id',
-        'college_id',
-        'major_id',
+        'name',
+        'starts_at',
+        'ends_at',
+        'capacity',
         'study_type_id',
-        'start_at',
-        'end_at',
-        'seats',
-        'is_active',
+        'applicable_type',
+        'applicable_id',
+        'is_open',
+        'allow_pending',
     ];
 
-    public function university(): BelongsTo
-    {
-        return $this->belongsTo(University::class);
-    }
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at'   => 'datetime',
+    ];
 
-    public function college(): BelongsTo
+    public function applicable(): MorphTo
     {
-        return $this->belongsTo(College::class);
-    }
-
-    public function major(): BelongsTo
-    {
-        return $this->belongsTo(Major::class);
+        return $this->morphTo();
     }
 
     public function studyType(): BelongsTo
     {
         return $this->belongsTo(StudyType::class);
+    }
+
+    public function requirementAssignments(): MorphMany
+    {
+        return $this->morphMany(
+            RequirementAssignment::class,
+            'context'
+        );
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
+
+    // منطق الأعمال
+    public function hasCapacity(): bool
+    {
+        return $this->applications()
+            ->whereIn('status', ['ACCEPTED', 'VERIFIED'])
+            ->count() < $this->capacity;
+    }
+
+    public function isOpen(): bool
+    {
+        now()->between($this->starts_at, $this->ends_at);
     }
 }

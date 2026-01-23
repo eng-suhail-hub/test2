@@ -18,8 +18,13 @@ return new class extends Migration
         ->constrained()
         ->cascadeOnDelete();
 
-    $table->dateTime('appointment_at');
+    $table->date('attendance_date');
+    $table->time('attendance_time')->nullable();
+
     $table->string('location')->nullable();
+    $table->text('instructions')->nullable();
+
+    $table->boolean('attendance_confirmed')->default(false);
 
     $table->timestamps();
 });
